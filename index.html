@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>The Most Annoying Game Ever</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-5px, -5px) rotate(-1deg); }
+            20% { transform: translate(5px, 5px) rotate(1deg); }
+            30% { transform: translate(-5px, 5px) rotate(-1deg); }
+            40% { transform: translate(5px, -5px) rotate(1deg); }
+            50% { transform: translate(-5px, -5px) rotate(-1deg); }
+            60% { transform: translate(5px, 5px) rotate(1deg); }
+            70% { transform: translate(-5px, 5px) rotate(-1deg); }
+            80% { transform: translate(5px, -5px) rotate(1deg); }
+            90% { transform: translate(-5px, -5px) rotate(-1deg); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes rainbow {
+            0% { color: red; }
+            16% { color: orange; }
+            33% { color: yellow; }
+            50% { color: green; }
+            66% { color: blue; }
+            83% { color: indigo; }
+            100% { color: violet; }
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            padding: 20px;
+        }
+
+        .game-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            margin: 20px auto;
+        }
+
+        h1 {
+            font-size: clamp(1.5em, 5vw, 2.5em);
+            color: #ff0080;
+            text-shadow: 3px 3px #40e0d0;
+            margin-bottom: 20px;
+            animation: pulse 1s infinite;
+            line-height: 1.2;
+        }
+
+        .level-info {
+            font-size: clamp(1.2em, 4vw, 1.5em);
+            color: #ff8c00;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .instruction {
+            font-size: clamp(1em, 3vw, 1.2em);
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: clamp(1em, 3.5vw, 1.2em);
+            font-family: 'Comic Sans MS', cursive;
+            background: #ff0080;
+            color: white;
+            border: 3px solid #40e0d0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 5px 5px 0 #ff8c00;
+            touch-action: manipulation;
+            min-width: 120px;
+            min-height: 50px;
+            margin: 5px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 3px 3px 0 #ff8c00;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 1.1em;
+            font-family: 'Comic Sans MS', cursive;
+            border: 3px solid #ff0080;
+            border-radius: 10px;
+            margin: 10px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .timer {
+            font-size: clamp(1.5em, 5vw, 2em);
+            color: red;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #ddd;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0080, #40e0d0);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .fake-button {
+            position: fixed;
+            padding: 12px 20px;
+            font-size: clamp(0.8em, 3vw, 0.9em);
+            opacity: 0.9;
+            z-index: 50;
+            min-width: 100px;
+        }
+
+        .popup {
+            position: fixed;
+            background: yellow;
+            border: 3px solid red;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: pulse 0.5s infinite;
+            font-size: clamp(0.9em, 3vw, 1.1em);
+            max-width: 80%;
+        }
+
+        .scroll-box {
+            height: 200px;
+            overflow-y: scroll;
+            border: 3px solid #ff0080;
+            padding: 15px;
+            margin: 20px 0;
+            background: #fff;
+            text-align: left;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .checkbox-group {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .checkbox-group label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .math-problem {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff0080;
+            margin: 20px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .grid-button {
+            padding: 30px;
+            font-size: 1.5em;
+            min-height: 80px;
+        }
+
+        .captcha-box {
+            background: #f0f0f0;
+            border: 2px solid #999;
+            padding: 20px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .captcha-text {
+            font-family: monospace;
+            font-size: 2em;
+            letter-spacing: 5px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: line-through;
+            transform: skew(-5deg);
+            filter: blur(0.5px);
+        }
+
+        .end-screen {
+            font-size: clamp(1.5em, 6vw, 3em);
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            animation: spin 2s linear infinite;
+            padding: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: red;
+            animation: fall 3s linear infinite;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 40px;
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .loading-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.1s linear;
+        }
+
+        .word-box {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            background: #ff0080;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .sequence-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ff0080;
+            margin: 30px 0;
+            min-height: 80px;
+        }
+
+        .moving-button {
+            position: fixed;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="gameContainer">
+        <div class="game-box" id="gameBox">
+            <h1>BRANDON'S FUN TIME</h1>
+            <div class="level-info">Level: <span id="level">1</span>/15</div>
+            <p class="instruction" id="instruction">Tap the button to start your journey of regret!</p>
+            <button id="gameButton" ontouchstart="handleTouch(event)" onclick="handleClick(event)">START GAME</button>
+        </div>
+    </div>
+
+    <script>
+        let level = 1;
+        let gameButton;
+        let instruction;
+        let levelDisplay;
+        let gameBox = document.getElementById('gameBox');
+        let timer = null;
+        let popupInterval = null;
+        let touchX = 0, touchY = 0;
+        let buttonMoving = false;
+        let clickHandled = false;
+        let currentLevelData = {};
+
+        function initializeElements() {
+            gameButton = document.getElementById('gameButton');
+            instruction = document.getElementById('instruction');
+            levelDisplay = document.getElementById('level');
+        }
+
+        initializeElements();
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                touchX = e.touches[0].clientX;
+                touchY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                touchX = e.touches[0].clientX;
+                touchY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        document.addEventListener('mousemove', (e) => {
+            touchX = e.clientX;
+            touchY = e.clientY;
+        });
+
+        function handleTouch(e) {
+            e.preventDefault();
+            if (!clickHandled) {
+                clickHandled = true;
+                handleClick(e);
+                setTimeout(() => { clickHandled = false; }, 300);
+            }
+        }
+
+        function handleClick(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            level++;
+            clearAllIntervals();
+            resetGameBox();
+            
+            levelDisplay.textContent = level;
+
+            switch(level) {
+                case 2: startLevel2(); break;
+                case 3: startLevel3(); break;
+                case 4: startLevel4(); break;
+                case 5: startLevel5(); break;
+                case 6: startLevel6(); break;
+                case 7: startLevel7(); break;
+                case 8: startLevel8(); break;
+                case 9: startLevel9(); break;
+                case 10: startLevel10(); break;
+                case 11: startLevel11(); break;
+                case 12: startLevel12(); break;
+                case 13: startLevel13(); break;
+                case 14: startLevel14(); break;
+                case 15: startLevel15(); break;
+                case 16: endGame(); break;
+            }
+        }
+
+        function clearAllIntervals() {
+            clearInterval(timer);
+            clearInterval(popupInterval);
+            buttonMoving = false;
+            document.body.style.animation = '';
+            document.querySelectorAll('.fake-button, .popup').forEach(el => el.remove());
+        }
+
+        function resetGameBox() {
+            gameBox.style.animation = '';
+            
+            // Clear and rebuild the game box with basic structure
+            gameBox.innerHTML = `
+                <h1>THE MOST ANNOYING GAME EVER!</h1>
+                <div class="level-info">Level: <span id="level">${level}</span>/15</div>
+                <p class="instruction" id="instruction"></p>
+                <button id="gameButton" ontouchstart="handleTouch(event)" onclick="handleClick(event)">NEXT</button>
+            `;
+            
+            // Re-initialize element references
+            initializeElements();
+        }
+
+        // LEVEL 2: Read the Terms & Conditions
+        function startLevel2() {
+            instruction.textContent = "Read the entire Terms & Conditions and check the box at the bottom!";
+            gameButton.style.display = 'none';
+            
+            const scrollBox = document.createElement('div');
+            scrollBox.className = 'scroll-box';
+            scrollBox.innerHTML = `
+                <h3>TERMS AND CONDITIONS</h3>
+                <p>By playing this game, you acknowledge that you are willingly wasting your precious time on Earth.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>You must scroll through all of this meaningless legal jargon to proceed.</p>
+                <p>Section 1.1: The game creator is not responsible for any time wasted.</p>
+                <p>Section 1.2: All your base are belong to us.</p>
+                <p>Section 2.1: You agree that this is completely pointless.</p>
+                <p>Section 2.2: But you're still reading this aren't you?</p>
+                <p>Section 3.1: Almost there! Keep scrolling!</p>
+                <p>Section 3.2: Nope, still more to go!</p>
+                <p>Section 4.1: Why are you still here?</p>
+                <p>Section 4.2: Don't you have anything better to do?</p>
+                <p>Section 5.1: Okay fine, you can check the box now.</p>
+                <div style="margin-top: 20px;">
+                    <label>
+                        <input type="checkbox" id="agreeBox" style="width: auto; margin: 0 10px 0 0;"> 
+                        I have read and agree to waste my time
+                    </label>
+                </div>
+            `;
+            gameBox.appendChild(scrollBox);
+            
+            const continueBtn = document.createElement('button');
+            continueBtn.textContent = 'CONTINUE';
+            continueBtn.onclick = () => {
+                if (document.getElementById('agreeBox').checked) {
+                    handleClick();
+                } else {
+                    vibrate();
+                    showQuickAlert("You must check the box! 📋");
+                }
+            };
+            gameBox.appendChild(continueBtn);
+        }
+
+        // LEVEL 3: Click 50 Times
+        function startLevel3() {
+            instruction.textContent = "Click the button 50 times to prove your dedication!";
+            let clicks = 0;
+            const targetClicks = 50;
+            
+            gameButton.textContent = `CLICKED: ${clicks}/${targetClicks}`;
+            gameButton.style.display = 'block';
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            progressBar.innerHTML = '<div class="progress-fill" id="clickProgress">0%</div>';
+            gameBox.insertBefore(progressBar, gameButton);
+            
+            gameButton.onclick = (e) => {
+                e.stopPropagation();
+                clicks++;
+                gameButton.textContent = `CLICKED: ${clicks}/${targetClicks}`;
+                const percent = (clicks / targetClicks * 100).toFixed(0);
+                document.getElementById('clickProgress').style.width = percent + '%';
+                document.getElementById('clickProgress').textContent = percent + '%';
+                
+                if (clicks >= targetClicks) {
+                    setTimeout(() => handleClick(), 500);
+                }
+            };
+            gameButton.ontouchstart = gameButton.onclick;
+        }
+
+        // LEVEL 4: Math Problem
+        function startLevel4() {
+            const num1 = Math.floor(Math.random() * 50) + 10;
+            const num2 = Math.floor(Math.random() * 50) + 10;
+            const answer = num1 + num2;
+            
+            instruction.textContent = "Solve this simple math problem:";
+            gameButton.style.display = 'none';
+            
+            const mathDiv = document.createElement('div');
+            mathDiv.className = 'math-problem';
+            mathDiv.textContent = `${num1} + ${num2} = ?`;
+            gameBox.appendChild(mathDiv);
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.placeholder = 'Enter answer';
+            input.id = 'mathAnswer';
+            gameBox.appendChild(input);
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.textContent = 'SUBMIT';
+            submitBtn.onclick = () => {
+                const userAnswer = parseInt(document.getElementById('mathAnswer').value);
+                if (userAnswer === answer) {
+                    handleClick();
+                } else {
+                    vibrate();
+                    showQuickAlert("WRONG! Try again! 🤓");
+                    input.value = '';
+                }
+            };
+            gameBox.appendChild(submitBtn);
+        }
+
+        // LEVEL 5: The Button Runs Away
+        function startLevel5() {
+            instruction.textContent = "Catch the button!";
+            gameButton.textContent = "CATCH ME!";
+            gameButton.style.display = 'block';
+            buttonMoving = true;
+            
+            const runAway = () => {
+                if (buttonMoving && level === 5) {
+                    moveButtonAway(touchX, touchY);
+                    requestAnimationFrame(runAway);
+                }
+            };
+            runAway();
+        }
+
+        function moveButtonAway(targetX, targetY) {
+            const btnRect = gameButton.getBoundingClientRect();
+            const btnX = btnRect.left + btnRect.width / 2;
+            const btnY = btnRect.top + btnRect.height / 2;
+            
+            const distance = Math.sqrt(Math.pow(targetX - btnX, 2) + Math.pow(targetY - btnY, 2));
+            
+            if (distance < 150) {
+                const angle = Math.atan2(btnY - targetY, btnX - targetX);
+                const moveDistance = 80;
+                const moveX = Math.cos(angle) * moveDistance;
+                const moveY = Math.sin(angle) * moveDistance;
+                
+                let newX = btnRect.left + moveX;
+                let newY = btnRect.top + moveY;
+                
+                const margin = 20;
+                newX = Math.max(margin, Math.min(window.innerWidth - btnRect.width - margin, newX));
+                newY = Math.max(margin, Math.min(window.innerHeight - btnRect.height - margin, newY));
+                
+                gameButton.style.position = 'fixed';
+                gameButton.style.left = newX + 'px';
+                gameButton.style.top = newY + 'px';
+            }
+        }
+
+        // LEVEL 6: Wait 30 Seconds
+        function startLevel6() {
+            instruction.textContent = "Wait for 30 seconds... Don't touch anything!";
+            gameButton.style.display = 'none';
+            
+            let timeLeft = 30;
+            const timerDiv = document.createElement('div');
+            timerDiv.className = 'timer';
+            timerDiv.textContent = timeLeft + 's';
+            gameBox.appendChild(timerDiv);
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'loading-bar';
+            progressBar.innerHTML = '<div class="loading-fill" id="waitProgress"></div>';
+            gameBox.appendChild(progressBar);
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDiv.textContent = timeLeft + 's';
+                const percent = ((30 - timeLeft) / 30 * 100);
+                document.getElementById('waitProgress').style.width = percent + '%';
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    handleClick();
+                }
+            }, 1000);
+            
+            // Reset timer if they click
+            gameBox.onclick = () => {
+                if (level === 6) {
+                    vibrate();
+                    showQuickAlert("DON'T TOUCH! Starting over! ⏰");
+                    timeLeft = 30;
+                }
+            };
+        }
+
+        // LEVEL 7: Find the Different Button
+        function startLevel7() {
+            instruction.textContent = "One button is different! Find it!";
+            gameButton.style.display = 'none';
+            
+            const grid = document.createElement('div');
+            grid.className = 'grid';
+            
+            const correctIndex = Math.floor(Math.random() * 9);
+            
+            for (let i = 0; i < 9; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'grid-button';
+                
+                if (i === correctIndex) {
+                    btn.textContent = 'EAKE';
+                    btn.style.background = '#ff0080';
+                    btn.onclick = () => handleClick();
+                } else {
+                    btn.textContent = 'FAKE';
+                    btn.style.background = '#ff1090'; // Slightly different
+                    btn.onclick = () => {
+                        vibrate();
+                        showQuickAlert("WRONG! Try again! 🎯");
+                    };
+                }
+                
+                grid.appendChild(btn);
+            }
+            
+            gameBox.appendChild(grid);
+        }
+
+        // LEVEL 8: Type the Sentence
+        function startLevel8() {
+            const sentence = '"I am willingly wasting my time on this stupid game"';
+            instruction.textContent = "Type this sentence exactly:";
+            gameButton.style.display = 'none';
+            
+            const sentenceDiv = document.createElement('div');
+            sentenceDiv.style.fontSize = '1.2em';
+            sentenceDiv.style.fontWeight = 'bold';
+            sentenceDiv.style.margin = '20px 0';
+            sentenceDiv.style.color = '#ff0080';
+            sentenceDiv.textContent = `"${sentence}"`;
+            gameBox.appendChild(sentenceDiv);
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Type here...';
+            input.id = 'typingInput';
+            input.style.width = '90%';
+            gameBox.appendChild(input);
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.textContent = 'SUBMIT';
+            submitBtn.onclick = () => {
+                const typed = document.getElementById('typingInput').value;
+                if (typed === sentence) {
+                    handleClick();
+                } else {
+                    vibrate();
+                    showQuickAlert("Not exact! Try again! ⌨️");
+                    input.value = '';
+                }
+            };
+            gameBox.appendChild(submitBtn);
+        }
+
+        // LEVEL 9: CAPTCHA
+        function startLevel9() {
+            const captchaText = Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            instruction.textContent = "Prove you're a human! Enter the CAPTCHA:";
+            gameButton.style.display = 'none';
+            
+            const captchaBox = document.createElement('div');
+            captchaBox.className = 'captcha-box';
+            captchaBox.innerHTML = `<div class="captcha-text">${captchaText}</div>`;
+            gameBox.appendChild(captchaBox);
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Enter CAPTCHA';
+            input.id = 'captchaInput';
+            gameBox.appendChild(input);
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.textContent = 'VERIFY';
+            submitBtn.onclick = () => {
+                const entered = document.getElementById('captchaInput').value.toUpperCase();
+                if (entered === captchaText) {
+                    handleClick();
+                } else {
+                    vibrate();
+                    showQuickAlert("Wrong CAPTCHA! 🤖");
+                    input.value = '';
+                }
+            };
+            gameBox.appendChild(submitBtn);
+        }
+
+        // LEVEL 10: Memory Game
+        function startLevel10() {
+            instruction.textContent = "Memorize this sequence!";
+            gameButton.style.display = 'none';
+            
+            const sequence = [];
+            for (let i = 0; i < 5; i++) {
+                sequence.push(Math.floor(Math.random() * 9) + 1);
+            }
+            
+            const displayDiv = document.createElement('div');
+            displayDiv.className = 'sequence-display';
+            displayDiv.textContent = sequence.join(' - ');
+            gameBox.appendChild(displayDiv);
+            
+            setTimeout(() => {
+                displayDiv.textContent = '???';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = 'Enter sequence (e.g., 1-2-3-4-5)';
+                input.id = 'sequenceInput';
+                input.style.width = '90%';
+                gameBox.appendChild(input);
+                
+                const submitBtn = document.createElement('button');
+                submitBtn.textContent = 'SUBMIT';
+                submitBtn.onclick = () => {
+                    const entered = document.getElementById('sequenceInput').value.replace(/\s/g, '').split('-').join('');
+                    const correct = sequence.join('');
+                    if (entered === correct) {
+                        handleClick();
+                    } else {
+                        vibrate();
+                        showQuickAlert("Wrong sequence! 🧠");
+                        document.getElementById('sequenceInput').value = '';
+                    }
+                };
+                gameBox.appendChild(submitBtn);
+            }, 5000);
+        }
+
+        // LEVEL 11: Multiple Choice Hell
+        function startLevel11() {
+            instruction.textContent = "Answer all questions correctly!";
+            gameButton.style.display = 'none';
+            
+            const questions = [
+                { q: "What is 2+2?", a: "4", options: ["3", "4", "5", "Fish"] },
+                { q: "What color is the sky?", a: "Blue", options: ["Red", "Blue", "Green", "Potato"] },
+                { q: "How many levels in this game?", a: "15", options: ["10", "15", "20", "Too many"] }
+            ];
+            
+            let currentQ = 0;
+            
+            function showQuestion() {
+                gameBox.innerHTML = `
+                    <h1>THE MOST ANNOYING GAME EVER!</h1>
+                    <div class="level-info">Level: ${level}/15</div>
+                    <p class="instruction">Question ${currentQ + 1}/3: ${questions[currentQ].q}</p>
+                    <div class="checkbox-group" id="optionsBox"></div>
+                `;
+                
+                const optionsBox = document.getElementById('optionsBox');
+                questions[currentQ].options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.textContent = opt;
+                    btn.style.display = 'block';
+                    btn.style.width = '80%';
+                    btn.style.margin = '10px auto';
+                    btn.onclick = () => {
+                        if (opt === questions[currentQ].a) {
+                            currentQ++;
+                            if (currentQ >= questions.length) {
+                                handleClick();
+                            } else {
+                                showQuestion();
+                            }
+                        } else {
+                            vibrate();
+                            showQuickAlert("WRONG! Try again! 📚");
+                        }
+                    };
+                    optionsBox.appendChild(btn);
+                });
+            }
+            
+            showQuestion();
+        }
+
+        // LEVEL 12: Fake Loading Screen
+        function startLevel12() {
+            instruction.textContent = "Loading next level...";
+            gameButton.style.display = 'none';
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'loading-bar';
+            progressBar.innerHTML = '<div class="loading-fill" id="loadProgress"></div>';
+            gameBox.appendChild(progressBar);
+            
+            const percentDiv = document.createElement('div');
+            percentDiv.style.fontSize = '2em';
+            percentDiv.style.fontWeight = 'bold';
+            percentDiv.style.margin = '20px';
+            percentDiv.textContent = '0%';
+            gameBox.appendChild(percentDiv);
+            
+            let progress = 0;
+            timer = setInterval(() => {
+                progress += Math.random() * 3;
+                
+                // Slow down at 99%
+                if (progress >= 99 && progress < 100) {
+                    progress = 99;
+                }
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(timer);
+                    setTimeout(() => handleClick(), 1000);
+                }
+                
+                document.getElementById('loadProgress').style.width = progress + '%';
+                percentDiv.textContent = Math.floor(progress) + '%';
+            }, 200);
+        }
+
+        // LEVEL 13: Don't Click the Button
+        function startLevel13() {
+            instruction.textContent = "DON'T click the button for 15 seconds!";
+            gameButton.textContent = "DON'T CLICK ME!";
+            gameButton.style.display = 'block';
+            gameButton.style.fontSize = '2em';
+            gameButton.style.animation = 'pulse 0.5s infinite';
+            
+            let timeLeft = 15;
+            const timerDiv = document.createElement('div');
+            timerDiv.className = 'timer';
+            timerDiv.textContent = timeLeft + 's';
+            gameBox.insertBefore(timerDiv, gameButton);
+            
+            let clicked = false;
+            
+            gameButton.onclick = (e) => {
+                e.stopPropagation();
+                clicked = true;
+                vibrate();
+                showQuickAlert("I SAID DON'T CLICK! Starting over! 🚫");
+                timeLeft = 15;
+                clicked = false;
+            };
+            gameButton.ontouchstart = gameButton.onclick;
+            
+            timer = setInterval(() => {
+                if (!clicked) {
+                    timeLeft--;
+                    timerDiv.textContent = timeLeft + 's';
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        handleClick();
+                    }
+                }
+            }, 1000);
+        }
+
+        // LEVEL 14: The Chaos Level
+        function startLevel14() {
+            instruction.textContent = "Find and click the REAL button!";
+            
+            // Screen shake
+            document.body.style.animation = 'shake 0.5s infinite';
+            
+            // Create many fake buttons
+            for (let i = 0; i < 8; i++) {
+                let fakeBtn = document.createElement('button');
+                fakeBtn.textContent = ["CLICK ME!", "NEXT!", "HERE!", "THIS ONE!"][Math.floor(Math.random() * 4)];
+                fakeBtn.className = 'fake-button';
+                fakeBtn.style.left = Math.random() * (window.innerWidth - 120) + 'px';
+                fakeBtn.style.top = Math.random() * (window.innerHeight - 60) + 'px';
+                fakeBtn.ontouchstart = fakeBtn.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    vibrate();
+                    showQuickAlert("WRONG! 😂");
+                };
+                document.body.appendChild(fakeBtn);
+            }
+            
+            // Annoying popups
+            popupInterval = setInterval(() => {
+                let popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.textContent = ['ERROR!', 'WARNING!', 'VIRUS!', 'ALERT!'][Math.floor(Math.random() * 4)];
+                popup.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+                popup.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 2000);
+            }, 800);
+            
+            // Real button
+            gameButton.textContent = "REAL!";
+            gameButton.style.display = 'block';
+            gameButton.style.background = '#00ff00';
+            buttonMoving = true;
+            
+            const runAway = () => {
+                if (buttonMoving && level === 14) {
+                    moveButtonAway(touchX, touchY);
+                    requestAnimationFrame(runAway);
+                }
+            };
+            runAway();
+        }
+
+        // LEVEL 15: The Final Boss
+        function startLevel15() {
+            instruction.textContent = "FINAL LEVEL! Complete 3 tasks!";
+            gameButton.style.display = 'none';
+            
+            let tasksCompleted = 0;
+            
+            // Make everything spin
+            gameBox.style.animation = 'spin 3s linear infinite';
+            
+            // Task 1: Click 20 times
+            const task1 = document.createElement('div');
+            task1.innerHTML = '<p>Task 1: Click 20 times</p><button id="task1Btn">Click: 0/20</button>';
+            gameBox.appendChild(task1);
+            
+            let clicks = 0;
+            document.getElementById('task1Btn').onclick = function() {
+                clicks++;
+                this.textContent = `Click: ${clicks}/20`;
+                if (clicks >= 20) {
+                    this.disabled = true;
+                    this.textContent = '✓ DONE';
+                    this.style.background = '#00ff00';
+                    tasksCompleted++;
+                    checkComplete();
+                }
+            };
+            
+            // Task 2: Wait 10 seconds
+            const task2 = document.createElement('div');
+            task2.innerHTML = '<p>Task 2: Wait 10 seconds</p><div id="task2Timer">10s</div>';
+            gameBox.appendChild(task2);
+            
+            let wait = 10;
+            const waitTimer = setInterval(() => {
+                wait--;
+                document.getElementById('task2Timer').textContent = wait + 's';
+                if (wait <= 0) {
+                    clearInterval(waitTimer);
+                    document.getElementById('task2Timer').textContent = '✓ DONE';
+                    document.getElementById('task2Timer').style.color = '#00ff00';
+                    tasksCompleted++;
+                    checkComplete();
+                }
+            }, 1000);
+            
+            // Task 3: Solve math
+            const num1 = Math.floor(Math.random() * 20) + 5;
+            const num2 = Math.floor(Math.random() * 20) + 5;
+            const task3 = document.createElement('div');
+            task3.innerHTML = `
+                <p>Task 3: ${num1} × ${num2} = ?</p>
+                <input type="number" id="task3Input" style="width: 100px;">
+                <button id="task3Btn">Check</button>
+            `;
+            gameBox.appendChild(task3);
+            
+            document.getElementById('task3Btn').onclick = () => {
+                const answer = parseInt(document.getElementById('task3Input').value);
+                if (answer === num1 * num2) {
+                    document.getElementById('task3Btn').disabled = true;
+                    document.getElementById('task3Input').disabled = true;
+                    document.getElementById('task3Btn').textContent = '✓ DONE';
+                    document.getElementById('task3Btn').style.background = '#00ff00';
+                    tasksCompleted++;
+                    checkComplete();
+                } else {
+                    vibrate();
+                    showQuickAlert("Wrong answer! 🧮");
+                }
+            };
+            
+            function checkComplete() {
+                if (tasksCompleted >= 3) {
+                    setTimeout(() => handleClick(), 1000);
+                }
+            }
+        }
+
+        function showQuickAlert(message) {
+            let alertBox = document.createElement('div');
+            alertBox.className = 'popup';
+            alertBox.textContent = message;
+            alertBox.style.left = '50%';
+            alertBox.style.top = '50%';
+            alertBox.style.transform = 'translate(-50%, -50%)';
+            alertBox.style.fontSize = '1.2em';
+            alertBox.style.zIndex = '10000';
+            document.body.appendChild(alertBox);
+            
+            setTimeout(() => alertBox.remove(), 2000);
+        }
+
+        function vibrate() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(200);
+            }
+        }
+
+        function endGame() {
+            clearAllIntervals();
+            document.body.style.animation = '';
+            document.body.innerHTML = '';
+            
+            // Create confetti
+            const confettiCount = window.innerWidth < 768 ? 30 : 50;
+            for(let i = 0; i < confettiCount; i++) {
+                let confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = ['red', 'blue', 'green', 'yellow', 'purple'][Math.floor(Math.random() * 5)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(confetti);
+            }
+
+            let endScreen = document.createElement('div');
+            endScreen.className = 'end-screen';
+            endScreen.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
+                    <h1 style="font-size: clamp(2em, 8vw, 4em); margin-bottom: 20px; line-height: 1.2; animation: rainbow 2s linear infinite;">🎉 CONGRATULATIONS! 🎉</h1>
+                    <h2 style="font-size: clamp(1.5em, 6vw, 3em); color: #ff0080; line-height: 1.3; margin: 20px 0;">YOU JUST WASTED YOUR TIME IDIOT</h2>
+                    <p style="font-size: clamp(1em, 4vw, 1.5em); margin-top: 20px;">You completed all 15 levels!</p>
+                    <p style="font-size: clamp(1.2em, 5vw, 2em); margin-top: 20px;">😂😂😂</p>
+                    <p style="font-size: clamp(0.8em, 3vw, 1em); margin-top: 40px; opacity: 0.7;">Time you'll never get back! 💀</p>
+                </div>
+            `;
+            document.body.appendChild(endScreen);
+
+            // Vibrate for victory
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+
+            // Play annoying sound
+            setTimeout(() => {
+                if('speechSynthesis' in window) {
+                    let utterance = new SpeechSynthesisUtterance('Congratulations! You just wasted your time, idiot!');
+                    utterance.rate = 0.5;
+                    utterance.pitch = 2;
+                    speechSynthesis.speak(utterance);
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>
